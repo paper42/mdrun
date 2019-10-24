@@ -1,0 +1,20 @@
+#!/bin/sh
+while true; do
+    inotifywait -e close_write "$1"
+echo '
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/sunburst.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css">
+</head> 
+<body class="container">' | sudo tee "$2"
+
+    pandoc "$1" -o - | sudo tee -a "$2"
+
+    echo '</body>
+</html>' | sudo tee -a "$2"
+done
