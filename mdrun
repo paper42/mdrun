@@ -4,7 +4,19 @@ err() {
     exit 1
 }
 
-# TODO: allow user to specify language using for example -l en
+usage() {
+    err 'usage: mdrun [-l lang] SOURCE DEST'
+}
+
+lang=en
+if [ "$1" = '-l' ]; then
+    # validate lang from list of acceptable identifiers
+    [ -z "$2" ] && usage
+    lang="$2"
+    shift
+    shift
+fi
+
 source="$1"
 dest="$2"
 
@@ -14,7 +26,7 @@ touch "$dest" 2> /dev/null || err "permission denied: $dest";
 while true; do
     echo '
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="'"$lang"'">
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/sunburst.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
