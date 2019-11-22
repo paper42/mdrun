@@ -26,6 +26,7 @@ touch "$dest" 2> /dev/null || err "permission denied: $dest";
 ! [ -f "$source" ] && err "file does not exist: $source"
 
 while true; do
+    printf 'Generating ... '
     echo '
 <!DOCTYPE html>
 <html lang="'"$lang"'">
@@ -45,5 +46,7 @@ while true; do
     echo '
     </body>
 </html>' >> "$dest"
-    inotifywait -e close_write "$source"
+    echo 'done'
+    echo 'Waiting for changes'
+    inotifywait -e close_write "$source" 2> /dev/null
 done
