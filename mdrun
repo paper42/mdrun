@@ -1,7 +1,18 @@
 #!/bin/sh
+err() {
+    >&2 echo "$@"
+    exit 1
+}
+
+# TODO: allow user to specify language using for example -l en
+source="$1"
+dest="$2"
+
+touch "$dest" 2> /dev/null || err "permission denied: $dest";
+! [ -f "$source" ] && err "file does not exist: $source"
+
 while true; do
-    inotifywait -e close_write "$1"
-echo '
+    echo '
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -13,11 +24,12 @@ echo '
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css">
 </head> 
 <body class="container">
-' | sudo tee "$2"
+' > "$dest"
 
-    pandoc "$1" -o - | sudo tee -a "$2"
+    pandoc "$source" -o - >> "$dest"
 
     echo '
     </body>
-</html>' | sudo tee -a "$2"
+</html>' >> "$dest"
+    inotifywait -e close_write "$source"
 done
