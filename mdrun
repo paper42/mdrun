@@ -5,13 +5,15 @@ err() {
 }
 
 usage() {
-    err 'usage: mdrun [-l lang] SOURCE DEST'
+    echo 'usage: mdrun [-h] [-l lang] SOURCE DEST'
 }
+
+[ "$1" = '-h' ] && usage && exit 0
 
 lang=en
 if [ "$1" = '-l' ]; then
     # validate lang from list of acceptable identifiers
-    [ -z "$2" ] && usage
+    [ -z "$2" ] && usage && exit 1
     lang="$2"
     shift
     shift
