@@ -5,7 +5,7 @@ err() {
 }
 
 usage() {
-    echo 'usage: mdrun [-h] [-l lang] SOURCE DEST'
+    echo 'usage: mdrun [-h] [-l lang] [-o offline] SOURCE DEST'
 }
 
 [ "$1" = '-h' ] && usage && exit 0
@@ -16,6 +16,12 @@ if [ "$1" = '-l' ]; then
     [ -z "$2" ] && usage && exit 1
     lang="$2"
     shift
+    shift
+fi
+
+offline=0
+if [ "$1" = '-o' ]; then
+    offline=1
     shift
 fi
 
@@ -31,15 +37,26 @@ while true; do
 <!DOCTYPE html>
 <html lang="'"$lang"'">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/sunburst.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
+' > "$dest"
+if [ "$offline" = 0 ]; then
+    echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/sunburst.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css">
+' >> "$dest"
+else
+    echo '<link rel="stylesheet" href="sunburst.min.css">
+    <script src="highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="dark.min.css">
+' >> "$dest"
+fi
+echo '
 </head> 
 <body class="container">
-' > "$dest"
+' >> "$dest"
 
     pandoc "$source" -o - >> "$dest"
 
