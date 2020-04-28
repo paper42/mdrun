@@ -5,7 +5,7 @@ err() {
 }
 
 usage() {
-    echo 'usage: mdrun [-h] [-l lang] [-o offline] SOURCE DEST'
+    echo 'usage: mdrun [-h] [-l lang] [-o offline] [-a customheader] SOURCE DEST'
 }
 
 [ "$1" = '-h' ] && usage && exit 0
@@ -15,6 +15,13 @@ if [ "$1" = '-l' ]; then
     # validate lang from list of acceptable identifiers
     [ -z "$2" ] && usage && exit 1
     lang="$2"
+    shift
+    shift
+fi
+
+if [ "$1" = '-a' ]; then
+    [ -z "$2" ] && usage && exit 1
+    customheader="$2"
     shift
     shift
 fi
@@ -39,6 +46,7 @@ while true; do
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
+	'"$customheader"'
 ' > "$dest"
 if [ "$offline" = 0 ]; then
     echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/sunburst.min.css">
